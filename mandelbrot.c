@@ -45,9 +45,7 @@ int main(int argc, char* argv[]){
 
 	typedef enum { Console, Picture } PlottingMode;
 
-	struct Complex center;
-	center.a = -0.5;
-	center.b = 0;
+	struct Complex center = {-0.5, 0};
 	int iterations = 1000;
 	int res_x = 210;
 	int res_y = 65;
@@ -87,12 +85,12 @@ int main(int argc, char* argv[]){
 			aspectRatio = atof(argv[i + 1]);
 			i += 2;
 		}
-		else if (str(argv[i], "-console") == 0 || strcmp(argv[i], "-cmd")){
-			plottingMode = Console;
+		else if (strcmp(argv[i], "-console") == 0 || strcmp(argv[i], "-cmd")){
+			mode = Console;
 			i++;
 		}
 		else if ((strcmp(argv[i], "-picture") == 0 || strcmp(argv[i], "-pic") == 0) && i + 1 < argc){
-			plottingMode = Picture;
+			mode = Picture;
 			pictureFilename = argv[i + 1];
 			i += 2;
 		} 
@@ -125,9 +123,6 @@ int main(int argc, char* argv[]){
 	switch (mode){
 		case Console:
 			plotConsole(center, iterations, res_x, res_y, scale, aspectRatio);
-			break;
-		case Picture:
-			//plotPicture(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio, pictureFilename);
 			break;
 	}
 

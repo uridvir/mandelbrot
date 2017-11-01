@@ -4,19 +4,26 @@
 
 int main(){
 
-	struct Color** colorMap = malloc(10 * sizeof(struct Color*));
-	for (int i = 0; i < 10; i++) colorMap[i] = malloc(10 * sizeof(struct Color));
+	const int n = 50;
 
-	for (int x = 0; x < 10; x++){
-		for (int y = 0; y < 10; y++){
-			struct Color* currentPixel = &colorMap[x][y];
-			currentPixel->red = 4;
-			currentPixel->green = 23;
-			currentPixel->blue = 255;
+	struct Color** colorMap = malloc(n * sizeof(struct Color*));
+	for (int i = 0; i < n; i++) colorMap[i] = malloc(n * sizeof(struct Color));
+
+	for (int x = 0; x < n; x++){
+		for (int y = 0; y < n; y++){
+			colorMap[x][y].red = 255;
+			colorMap[x][y].green = 255;
+			colorMap[x][y].blue = 255;
 		}
 	}
 
-	imageToFile(colorMap, 10, 10, "10x10.ppm");
+	char* filename = malloc(50 * sizeof(char));
+	sprintf(filename, "%dx%d.ppm", n, n);
+
+	imageToFile(colorMap, n, n, filename);
+
+	free(colorMap);
+	free(filename);
 
 	return 0;
 

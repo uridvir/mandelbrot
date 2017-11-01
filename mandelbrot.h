@@ -7,9 +7,7 @@ bool isBounded(struct Complex x){
 }
 
 bool inMandelbrotSet(struct Complex x, int iterations){
-	struct Complex z;
-	z.a = 0;
-	z.b = 0;
+	struct Complex z = {0, 0};
 	for (int i = 0; i < iterations; i++){
 		if (!isBounded(z)) {
 			return false;
@@ -57,12 +55,12 @@ void plotConsole(struct Complex center, int iterations, int res_x, int res_y, do
 		}
 		printf("\n");
 	}
+	for (int i = 0; i < res_x; i++) free(plot[i]);
+	free(plot);
 }
 
 int iterationsToEscape(struct Complex x, int iterations){
-	struct Complex z;
-	z.a = 0;
-	z.b = 0;
+	struct Complex z = {0, 0};
 	for (int i = 0; i < iterations; i++){
 		if (!isBounded(z)){
 			return i;
@@ -87,5 +85,7 @@ int** plotIterationsToEscape(struct Complex center, int iterations, int res_x, i
 			result[x][y] = iterationsToEscape(plot[x][y], iterations);
 		}
 	}
+	for (int i = 0; i < res_x; i++) free(plot[i]);
+	free(plot);
 	return result;
 }

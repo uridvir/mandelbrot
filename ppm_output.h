@@ -19,11 +19,9 @@ int digitsInNumber(unsigned char n){
 void imageToFile(struct Color** colorMap, int res_x, int res_y, char* filename){
 	FILE* pOutputFile;
 	pOutputFile = fopen(filename, "w");
-
 	fprintf(pOutputFile, "P3\n");
 	fprintf(pOutputFile, "%d %d\n", res_x, res_y);
 	fprintf(pOutputFile, "%d\n", 255);
-
 	int digits = 0;
 	for (int y = 0; y < res_y; y++){
 		for (int x = 0; x < res_x; x++){
@@ -39,6 +37,5 @@ void imageToFile(struct Color** colorMap, int res_x, int res_y, char* filename){
 			fprintf(pOutputFile, "%d %d %d ", currentPixel.red, currentPixel.green, currentPixel.blue);
 		}
 	}
-
 	fclose(pOutputFile);
 }
