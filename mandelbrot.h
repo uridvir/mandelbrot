@@ -94,3 +94,29 @@ int** plotIterationsToEscape(struct Complex center, int iterations, int res_x, i
 	free(plot);
 	return result;
 }
+
+void blackWhitePlotPicture(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio, char* pictureFilename){
+	const double min_real = center.a - aspectRatio / scale;
+	const double max_real = center.a + aspectRatio / scale;
+	const double min_imag = center.b - 1 / scale;
+	const double max_imag = center.b + 1 / scale;
+	const struct Color White = {255, 255, 255};
+	const struct Color Black = {0, 0, 0};
+	int** iterationsPlot = plotIterationsToEscape(center, iterations, res_x, res_y, scale, aspectRatio);
+	struct Color** colorMap = malloc(res_x * sizeof(struct Color*));
+	for (int i = 0; i < res_x; i++) colorMap[i] = malloc(res_y * sizeof(struct Color));
+	for (int x = 0; x < res_x; x++){
+		for (int y = 0; y < res_y; y++){
+			if (iterationsPlot[x][y] > iterations){
+				colorMap[x][y] = Black;
+			}
+			else {
+				colorMap[x][y] = White;
+			}
+		}
+	}
+	imageToFile(colorMap, res_x, res_y, pictureFilename);
+	free(iterationsPlot);
+	for (int i = 0; i < res_x; i++) free(colorMap[i]);
+	free(colorMap);
+}

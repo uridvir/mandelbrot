@@ -38,7 +38,7 @@ bool isNumber(char* str){
 
 int main(int argc, char* argv[]){
 
-	typedef enum { Console, Picture } PlottingMode;
+	typedef enum { Console = 0, Picture = 1 } PlottingMode;
 
 	struct Complex center = {-0.5, 0};
 	int iterations = 1000;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]){
 			aspectRatio = atof(argv[i + 1]);
 			i += 2;
 		}
-		else if (strcmp(argv[i], "-console") == 0 || strcmp(argv[i], "-cmd")){
+		else if (strcmp(argv[i], "-console") == 0 || strcmp(argv[i], "-cmd") == 0){
 			mode = Console;
 			i++;
 		}
@@ -118,6 +118,9 @@ int main(int argc, char* argv[]){
 	switch (mode){
 		case Console:
 			plotConsole(center, iterations, res_x, res_y, scale, aspectRatio);
+			break;
+		case Picture:
+			blackWhitePlotPicture(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio, pictureFilename);
 			break;
 	}
 
