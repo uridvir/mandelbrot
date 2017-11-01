@@ -1,11 +1,6 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <limits.h>
-#include <time.h>
-#include "complex.h"
 #include "mandelbrot.h"
-#include "ppm_output.h"
+#include <string.h>
+#include <time.h>
 
 bool isNumber(char* str){
 	for (int i = 0; i < strlen(str); i++){

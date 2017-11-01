@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "complex.h"
+#include "ppm_output.h"
+
 bool isBounded(struct Complex x){
 	if (x.a * x.a + x.b * x.b <= 4){
 		return true;
