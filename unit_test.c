@@ -4,27 +4,38 @@
 
 int main(){
 
-	const int n = 50;
+	struct Palette palette;
+	palette.numberOfColors = 4;
+	palette.percentIterationsArray = malloc(palette.numberOfColors * sizeof(double));
+	palette.colorArray = malloc(palette.numberOfColors * sizeof(struct Color));
+	palette.percentIterationsArray[0] = 0;
+	palette.percentIterationsArray[1] = 0.333;
+	palette.percentIterationsArray[2] = 0.666;
+	palette.percentIterationsArray[3] = 1;
+	palette.colorArray[0] = (struct Color){0, 0, 0};
+	palette.colorArray[1] = (struct Color){255, 0, 0};
+	palette.colorArray[2] = (struct Color){0, 255, 0};
+	palette.colorArray[3] = (struct Color){0, 0, 255};
 
-	struct Color** colorMap = malloc(n * sizeof(struct Color*));
-	for (int i = 0; i < n; i++) colorMap[i] = malloc(n * sizeof(struct Color));
+	double totalIterations = 1000;
 
-	for (int x = 0; x < n; x++){
-		for (int y = 0; y < n; y++){
-			colorMap[x][y].red = 255;
-			colorMap[x][y].green = 255;
-			colorMap[x][y].blue = 255;
-		}
+	struct Color** colorMap = malloc((totalIterations + 1) * sizeof(struct Color*));
+	for (int i = 0; i < totalIterations + 1; i++) colorMap[i] = malloc((totalIterations + 1) * sizeof(struct Color));
+
+	int iterations = 1;
+	for (int i = 0; i < totalIterations + 1; i++){
+		struct Color colorOfRow = pickColor(iterations, totalIterations, palette);
+		for (int j = 0; j < totalIterations + 1; j++) colorMap[j][i] = colorOfRow;
+		iterations++;
 	}
 
-	char* filename = malloc(50 * sizeof(char));
-	sprintf(filename, "%dx%d.ppm", n, n);
+	imageToFile(colorMap, totalIterations + 1, totalIterations + 1, "colors.ppm");
 
-	imageToFile(colorMap, n, n, filename);
-
+	free(palette.percentIterationsArray);
+	free(palette.colorArray);
+	for (int i = 0; i < totalIterations + 1; i++) free(colorMap[i]);
 	free(colorMap);
-	free(filename);
-
+	
 	return 0;
 
 }

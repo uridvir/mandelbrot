@@ -2,8 +2,6 @@ struct Complex {
 	double a, b;
 };
 
-typedef enum { false, true } bool;
-
 struct Complex add(struct Complex x, struct Complex y){
 	struct Complex result;
 	result.a = x.a + y.a;

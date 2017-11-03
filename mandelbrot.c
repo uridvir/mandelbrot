@@ -38,7 +38,7 @@ bool isNumber(char* str){
 
 int main(int argc, char* argv[]){
 
-	typedef enum { Console = 0, Picture = 1 } PlottingMode;
+	typedef enum { Console, Picture } PlottingMode;
 
 	struct Complex center = {-0.5, 0};
 	int iterations = 1000;
