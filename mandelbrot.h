@@ -125,3 +125,25 @@ void blackWhitePlotPicture(struct Complex center, int iterations, int res_x, int
 	for (int i = 0; i < res_x; i++) free(colorMap[i]);
 	free(colorMap);
 }
+
+void colorPlotPicture(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio, char* pictureFilename, struct Palette palette){
+	const double min_real = center.a - aspectRatio / scale;
+	const double max_real = center.a + aspectRatio / scale;
+	const double min_imag = center.b - 1 / scale;
+	const double max_imag = center.b + 1 / scale;
+	int** iterationsPlot = plotIterationsToEscape(center, iterations, res_x, res_y, scale, aspectRatio);
+	struct Color** colorMap = malloc(res_x * sizeof(struct Color*));
+	for (int i = 0; i < res_x; i++) colorMap[i] = malloc(res_y * sizeof(struct Color));
+	for (int x = 0; x < res_x; x++){
+		for (int y = 0; y < res_y; y++){
+			colorMap[x][y] = pickColor(iterationsPlot[x][y], iterations, palette);
+		}
+	}
+	char* comment = malloc(200 * sizeof(char));
+	sprintf(comment, "Centered at %f + %fi, scale factor %f, aspect ratio %f, resolution %dx%d", center.a, center.b, scale, aspectRatio, res_x, res_y);
+	imageToFile(colorMap, res_x, res_y, pictureFilename, comment);
+	free(comment);
+	free(iterationsPlot);
+	for (int i = 0; i < res_x; i++) free(colorMap[i]);
+	free(colorMap);
+}

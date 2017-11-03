@@ -62,10 +62,6 @@ struct Color pickColor(double iterationsPassed, double totalIterations, struct P
 			if (i > 0){
 				struct Color previousColor = palette.colorArray[i - 1];
 				struct Color currentColor = palette.colorArray[i];
-				int debug = 1;
-				if (debug) printf("%f <= %f\n", percentOfTotalIterationsPassed, palette.percentIterationsArray[i]);
-				if (debug) printf("previousColor R:%d G:%d B:%d\n", previousColor.red, previousColor.green, previousColor.blue);
-				if (debug) printf("currentColor R:%d G:%d B:%d\n", currentColor.red, currentColor.green, currentColor.blue);
 				struct Color result;
 				result.red = map(percentOfTotalIterationsPassed, palette.percentIterationsArray[i - 1], palette.percentIterationsArray[i], previousColor.red, currentColor.red);
 				result.green = map(percentOfTotalIterationsPassed, palette.percentIterationsArray[i - 1], palette.percentIterationsArray[i], previousColor.green, currentColor.green);
