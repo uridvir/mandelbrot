@@ -117,7 +117,10 @@ void blackWhitePlotPicture(struct Complex center, int iterations, int res_x, int
 			}
 		}
 	}
-	imageToFile(colorMap, res_x, res_y, pictureFilename);
+	char* comment = malloc(200 * sizeof(char));
+	sprintf(comment, "Centered at %f + %fi, scale factor %f, aspect ratio %f, resolution %dx%d", center.a, center.b, scale, aspectRatio, res_x, res_y);
+	imageToFile(colorMap, res_x, res_y, pictureFilename, comment);
+	free(comment);
 	free(iterationsPlot);
 	for (int i = 0; i < res_x; i++) free(colorMap[i]);
 	free(colorMap);

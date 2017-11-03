@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 struct Color {
 	unsigned char red, green, blue;
@@ -16,10 +17,13 @@ int digitsInNumber(unsigned char n){
 	}
 }
 
-void imageToFile(struct Color** colorMap, int res_x, int res_y, char* filename){
+void imageToFile(struct Color** colorMap, int res_x, int res_y, char* filename, char* comment){
 	FILE* pOutputFile;
 	pOutputFile = fopen(filename, "w");
 	fprintf(pOutputFile, "P3\n");
+	if (strlen(comment) > 0){
+		fprintf(pOutputFile, "# %s\n", comment);
+	}
 	fprintf(pOutputFile, "%d %d\n", res_x, res_y);
 	fprintf(pOutputFile, "%d\n", 255);
 	int digits = 0;
