@@ -13,18 +13,6 @@ bool isBounded(struct Complex x){
 	}
 }
 
-bool inMandelbrotSet(struct Complex x, int iterations){
-	struct Complex z = {0, 0};
-	for (int i = 0; i < iterations; i++){
-		if (!isBounded(z)) {
-			return false;
-		} else {
-			z = add(square(z), x);
-		}
-	}
-	return true;
-}
-
 struct Complex** complexArrayPlot(int res_x, int res_y, double min_real, double max_real, double min_imag, double max_imag){
 	const double spacing_x = (max_real - min_real) / (res_x - 1);
 	const double spacing_y = (max_imag - min_imag) / (res_y - 1);
@@ -45,27 +33,6 @@ struct Complex** complexArrayPlot(int res_x, int res_y, double min_real, double 
 	return result;
 }
 
-void plotConsole(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio){
-	const double min_real = center.a - aspectRatio / scale;
-	const double max_real = center.a + aspectRatio / scale;
-	const double min_imag = center.b - 1 / scale;
-	const double max_imag = center.b + 1 / scale;
-	struct Complex** plot = complexArrayPlot(res_x, res_y, min_real, max_real, min_imag, max_imag);
-	for (int y = 0; y < res_y; y++){
-		for (int x = 0; x < res_x; x++){
-			if (inMandelbrotSet(plot[x][y], iterations)){
-				printf("*");
-			}
-			else {
-				printf(" ");
-			}
-		}
-		printf("\n");
-	}
-	for (int i = 0; i < res_x; i++) free(plot[i]);
-	free(plot);
-}
-
 int iterationsToEscape(struct Complex x, int iterations){
 	struct Complex z = {0, 0};
 	for (int i = 0; i < iterations; i++){
@@ -79,23 +46,28 @@ int iterationsToEscape(struct Complex x, int iterations){
 	return iterations + 1;
 }
 
-int** plotIterationsToEscape(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio){
+void plotConsole(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio){
 	const double min_real = center.a - aspectRatio / scale;
 	const double max_real = center.a + aspectRatio / scale;
 	const double min_imag = center.b - 1 / scale;
 	const double max_imag = center.b + 1 / scale;
 	struct Complex** plot = complexArrayPlot(res_x, res_y, min_real, max_real, min_imag, max_imag);
-	int** result = malloc(res_x * sizeof(int*));
-	for (int i = 0; i < res_x; i++) result[i] = malloc(res_y * sizeof(int));
-	for (int x = 0; x < res_x; x++){
-		for (int y = 0; y < res_y; y++){
-			result[x][y] = iterationsToEscape(plot[x][y], iterations);
+	for (int y = 0; y < res_y; y++){
+		for (int x = 0; x < res_x; x++){
+			if (iterationsToEscape(plot[x][y], iterations) > iterations){
+				printf("*");
+			}
+			else {
+				printf(" ");
+			}
 		}
+		printf("\n");
 	}
 	for (int i = 0; i < res_x; i++) free(plot[i]);
 	free(plot);
-	return result;
 }
+
+
 
 void blackWhitePlotPicture(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio, char* pictureFilename){
 	const double min_real = center.a - aspectRatio / scale;
@@ -104,12 +76,12 @@ void blackWhitePlotPicture(struct Complex center, int iterations, int res_x, int
 	const double max_imag = center.b + 1 / scale;
 	const struct Color White = {255, 255, 255};
 	const struct Color Black = {0, 0, 0};
-	int** iterationsPlot = plotIterationsToEscape(center, iterations, res_x, res_y, scale, aspectRatio);
+	struct Complex** plot = complexArrayPlot(res_x, res_y, min_real, max_real, min_imag, max_imag);
 	struct Color** colorMap = malloc(res_x * sizeof(struct Color*));
 	for (int i = 0; i < res_x; i++) colorMap[i] = malloc(res_y * sizeof(struct Color));
 	for (int x = 0; x < res_x; x++){
 		for (int y = 0; y < res_y; y++){
-			if (iterationsPlot[x][y] > iterations){
+			if (iterationsToEscape(plot[x][y], iterations) > iterations){
 				colorMap[x][y] = Black;
 			}
 			else {
@@ -121,7 +93,7 @@ void blackWhitePlotPicture(struct Complex center, int iterations, int res_x, int
 	sprintf(comment, "Centered at %f + %fi, scale factor %f, aspect ratio %f, resolution %dx%d", center.a, center.b, scale, aspectRatio, res_x, res_y);
 	imageToFile(colorMap, res_x, res_y, pictureFilename, comment);
 	free(comment);
-	free(iterationsPlot);
+	free(plot);
 	for (int i = 0; i < res_x; i++) free(colorMap[i]);
 	free(colorMap);
 }
@@ -131,19 +103,19 @@ void colorPlotPicture(struct Complex center, int iterations, int res_x, int res_
 	const double max_real = center.a + aspectRatio / scale;
 	const double min_imag = center.b - 1 / scale;
 	const double max_imag = center.b + 1 / scale;
-	int** iterationsPlot = plotIterationsToEscape(center, iterations, res_x, res_y, scale, aspectRatio);
+	struct Complex** plot = complexArrayPlot(res_x, res_y, min_real, max_real, min_imag, max_imag);
 	struct Color** colorMap = malloc(res_x * sizeof(struct Color*));
 	for (int i = 0; i < res_x; i++) colorMap[i] = malloc(res_y * sizeof(struct Color));
 	for (int x = 0; x < res_x; x++){
 		for (int y = 0; y < res_y; y++){
-			colorMap[x][y] = pickColor(iterationsPlot[x][y], palette);
+			colorMap[x][y] = pickColor(iterationsToEscape(plot[x][y], iterations), palette);
 		}
 	}
 	char* comment = malloc(200 * sizeof(char));
 	sprintf(comment, "Centered at %f + %fi, scale factor %f, aspect ratio %f, resolution %dx%d", center.a, center.b, scale, aspectRatio, res_x, res_y);
 	imageToFile(colorMap, res_x, res_y, pictureFilename, comment);
 	free(comment);
-	free(iterationsPlot);
+	free(plot);
 	for (int i = 0; i < res_x; i++) free(colorMap[i]);
 	free(colorMap);
 }
