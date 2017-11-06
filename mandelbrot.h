@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ppm_output.h"
+#include "file_output.h"
 
 typedef enum { false, true } bool;
 
@@ -53,20 +53,29 @@ int** plotIterationsToEscape(struct Complex center, int iterations, int res_x, i
     int** result = malloc(res_x * sizeof(int*));
     for (int i = 0; i < res_x; i++) result[i] = malloc(res_y * sizeof(int));
     for (int x = 0; x < res_x; x++){
-            for (int y = 0; y < res_y; y++){
-                    result[x][y] = iterationsToEscape(plot[x][y], iterations);
-            }
+        for (int y = 0; y < res_y; y++){
+        	result[x][y] = iterationsToEscape(plot[x][y], iterations);
+        }
     }
     for (int i = 0; i < res_x; i++) free(plot[i]);
     free(plot);
     return result;
 }
 
-void plotConsole(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio){
-	int** iterationsPlot = plotIterationsToEscape(center, iterations, res_x, res_y, scale, aspectRatio);
-	for (int y = 0; y < res_y; y++){
-		for (int x = 0; x < res_x; x++){
-			if (iterationsPlot[x][y] > iterations){
+struct MandelbrotData {
+	int** iterationsPlot;
+	struct Complex center;
+	int iterations;
+	int res_x;
+	int res_y;
+	double scale;
+	double aspectRatio;
+};
+
+void plotConsole(struct MandelbrotData data){
+	for (int y = 0; y < data.res_y; y++){
+		for (int x = 0; x < data.res_x; x++){
+			if (data.iterationsPlot[x][y] > data.iterations){
 				printf("*");
 			}
 			else {
@@ -75,27 +84,20 @@ void plotConsole(struct Complex center, int iterations, int res_x, int res_y, do
 		}
 		printf("\n");
 	}
-	for (int i = 0; i < res_x; i++) free(iterationsPlot[i]);
-	free(iterationsPlot);
 }
 
-void colorPlotPicture(struct Complex center, int iterations, int res_x, int res_y, double scale, double aspectRatio, char* pictureFilename, struct Palette palette){
-	int** iterationsPlot = plotIterationsToEscape(center, iterations, res_x, res_y, scale, aspectRatio);
-	struct Color** colorMap = malloc(res_x * sizeof(struct Color*));
-	for (int i = 0; i < res_x; i++) colorMap[i] = malloc(res_y * sizeof(struct Color));
-	for (int x = 0; x < res_x; x++){
-		for (int y = 0; y < res_y; y++){
-			colorMap[x][y] = pickColor(iterationsPlot[x][y], palette);
+void colorPlotPicture(struct MandelbrotData data, char* pictureFilename, struct Palette palette){
+	struct Color** colorMap = malloc(data.res_x * sizeof(struct Color*));
+	for (int i = 0; i < data.res_x; i++) colorMap[i] = malloc(data.res_y * sizeof(struct Color));
+	for (int x = 0; x < data.res_x; x++){
+		for (int y = 0; y < data.res_y; y++){
+			colorMap[x][y] = pickColor(data.iterationsPlot[x][y], palette);
 		}
 	}
 	char* comment = malloc(200 * sizeof(char));
-	sprintf(comment, "Centered at %f + %fi, scale factor %f, aspect ratio %f, resolution %dx%d", center.a, center.b, scale, aspectRatio, res_x, res_y);
-	imageToFile(colorMap, res_x, res_y, pictureFilename, comment);
-	for (int i = 0; i < res_x; i++){
-		free(iterationsPlot[i]);
-		free(colorMap[i]);
-	}
-	free(iterationsPlot);
+	sprintf(comment, "Centered at %f + %fi, scale factor %f, aspect ratio %f, resolution %dx%d", data.center.a, data.center.b, data.scale, data.aspectRatio, data.res_x, data.res_y);
+	imageToFile(colorMap, data.res_x, data.res_y, pictureFilename, comment);
+	for (int i = 0; i < data.res_x; i++) free(colorMap[i]);
 	free(colorMap);
 	free(comment);
 }

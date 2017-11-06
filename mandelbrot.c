@@ -127,13 +127,27 @@ int main(int argc, char* argv[]){
 	}
 	
 	time_t timeBefore = time(0);
+	int** iterationsPlot;
+	struct MandelbrotData data = {NULL, center, iterations, 0, 0, scale, aspectRatio};
 
 	switch (mode){
 		case Console:
-			plotConsole(center, iterations, con_res_x, con_res_y, scale, aspectRatio);
+			iterationsPlot = plotIterationsToEscape(center, iterations, con_res_x, con_res_y, scale, aspectRatio);
+			data.iterationsPlot = iterationsPlot;
+			data.res_x = con_res_x;
+			data.res_y = con_res_y;
+			plotConsole(data);
+			for (int i = 0; i < con_res_x; i++) free(iterationsPlot[i]);
+			free(iterationsPlot);
 			break;
 		case Picture:
-			colorPlotPicture(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio, pictureFilename, palette);
+			iterationsPlot = plotIterationsToEscape(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio);
+			data.iterationsPlot = iterationsPlot;
+			data.res_x = pic_res_x;
+			data.res_y = pic_res_y;
+			colorPlotPicture(data, pictureFilename, palette);
+			for (int i = 0; i < pic_res_x; i++) free(iterationsPlot[i]);
+			free(iterationsPlot);
 			break;
 	}
 
