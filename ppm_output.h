@@ -45,7 +45,7 @@ void imageToFile(struct Color** colorMap, int res_x, int res_y, char* filename, 
 }
 
 struct Palette {
-	double* percentIterationsArray;
+	double* iterationsArray;
 	struct Color* colorArray;
 	int numberOfColors;
 };
@@ -55,17 +55,16 @@ double map(double n, double a, double b, double c, double d){
 	else if (a > b) return (n - b) / (a - b) * (d - c) + c;
 }
 
-struct Color pickColor(double iterationsPassed, double totalIterations, struct Palette palette){
-	const double percentOfTotalIterationsPassed = iterationsPassed / (totalIterations + 1);
+struct Color pickColor(double iterations, struct Palette palette){
 	for (int i = 0; i < palette.numberOfColors; i++){
-		if (percentOfTotalIterationsPassed <= palette.percentIterationsArray[i]){
+		if (iterations <= palette.iterationsArray[i]){
 			if (i > 0){
 				struct Color previousColor = palette.colorArray[i - 1];
 				struct Color currentColor = palette.colorArray[i];
 				struct Color result;
-				result.red = map(percentOfTotalIterationsPassed, palette.percentIterationsArray[i - 1], palette.percentIterationsArray[i], previousColor.red, currentColor.red);
-				result.green = map(percentOfTotalIterationsPassed, palette.percentIterationsArray[i - 1], palette.percentIterationsArray[i], previousColor.green, currentColor.green);
-				result.blue = map(percentOfTotalIterationsPassed, palette.percentIterationsArray[i - 1], palette.percentIterationsArray[i], previousColor.blue, currentColor.blue);
+				result.red = map(iterations, palette.iterationsArray[i - 1], palette.iterationsArray[i], previousColor.red, currentColor.red);
+				result.green = map(iterations, palette.iterationsArray[i - 1], palette.iterationsArray[i], previousColor.green, currentColor.green);
+				result.blue = map(iterations, palette.iterationsArray[i - 1], palette.iterationsArray[i], previousColor.blue, currentColor.blue);
 				return result;
 			}
 			else {
@@ -73,4 +72,5 @@ struct Color pickColor(double iterationsPassed, double totalIterations, struct P
 			}
 		}
 	}
+	return palette.colorArray[palette.numberOfColors - 1];
 }

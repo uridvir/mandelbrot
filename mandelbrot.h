@@ -136,7 +136,7 @@ void colorPlotPicture(struct Complex center, int iterations, int res_x, int res_
 	for (int i = 0; i < res_x; i++) colorMap[i] = malloc(res_y * sizeof(struct Color));
 	for (int x = 0; x < res_x; x++){
 		for (int y = 0; y < res_y; y++){
-			colorMap[x][y] = pickColor(iterationsPlot[x][y], iterations, palette);
+			colorMap[x][y] = pickColor(iterationsPlot[x][y], palette);
 		}
 	}
 	char* comment = malloc(200 * sizeof(char));

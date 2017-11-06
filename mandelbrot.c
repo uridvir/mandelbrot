@@ -42,14 +42,26 @@ int main(int argc, char* argv[]){
 
 	struct Complex center = {-0.5, 0};
 	int iterations = 1000;
-	int res_x = 210;
-	int res_y = 65;
+	int con_res_x = 210;
+	int con_res_y = 65;
 	double scale = 1;
 	double aspectRatio = 1.5;
 	PlottingMode mode = Console;
 	char* pictureFilename = "data.ppm";
 	double pic_res_x = 1620;
 	double pic_res_y = 1080;
+	struct Palette palette;
+	palette.numberOfColors = 4;
+	palette.iterationsArray = malloc(palette.numberOfColors * sizeof(double));
+	palette.colorArray = malloc(palette.numberOfColors * sizeof(struct Color));
+	palette.iterationsArray[0] = 0;
+	palette.iterationsArray[1] = 100;
+	palette.iterationsArray[2] = 800;
+	palette.iterationsArray[3] = 1000;
+	palette.colorArray[0] = (struct Color){0, 0, 128};
+	palette.colorArray[1] = (struct Color){255, 255, 255};
+	palette.colorArray[2] = (struct Color){255, 255, 255};
+	palette.colorArray[3] = (struct Color){0, 0, 0};
 
 	int i = 1;
 	while (i < argc){
@@ -62,9 +74,9 @@ int main(int argc, char* argv[]){
 			iterations = atoi(argv[i + 1]);
 			i += 2;
 		}
-		else if ((strcmp(argv[i], "-resolution") == 0 || strcmp(argv[i], "-r") == 0) && i + 2 < argc && isNumber(argv[i + 1]) && isNumber(argv[i + 2])){
-			res_x = atoi(argv[i + 1]);
-			res_y = atoi(argv[i + 2]);
+		else if ((strcmp(argv[i], "-consoleresolution") == 0 || strcmp(argv[i], "-cr") == 0) && i + 2 < argc && isNumber(argv[i + 1]) && isNumber(argv[i + 2])){
+			con_res_x = atoi(argv[i + 1]);
+			con_res_y = atoi(argv[i + 2]);
 			i += 3;
 		}
 		else if ((strcmp(argv[i], "-pictureresolution") == 0 || strcmp(argv[i], "-pr") == 0) && i + 2 < argc && isNumber(argv[i + 1]) && isNumber(argv[i + 2])){
@@ -95,14 +107,15 @@ int main(int argc, char* argv[]){
 			printf("Usage:\n");
 			printf("mandelbrot [-console] [-picture file] [-center a b] [-iterations i] [-resolution x y] [-pictureresolution x y] [-scale s] [-aspectratio a]\n\n");
 
-			printf("-center          Set center coordinates (shortcut is -c)\n");
-			printf("-iterations      Set iterations for each pixel in set (shortcut is -i)\n");
-			printf("-resolution      Set resolution of image (shortcut is -r)\n");
-			printf("-scale           Set scale (zoom) of image (shortcut is -s)\n");
-			printf("-aspectratio     Set aspect ratio of image (shortcut is -a)\n");
-			printf("--help           Display this help menu\n");
-			printf("-console         Set program to plot on the console (shortcut is -cmd) (console mode is the default)\n");
-			printf("-picture         Set program to plot in an image (shortcut is -pic)\n\n");
+			printf("-center                 Set center coordinates (shortcut is -c)\n");
+			printf("-iterations             Set iterations for each pixel in set (shortcut is -i)\n");
+			printf("-consoleresolution      Set resolution of image in console mode (shortcut is -cr)\n");
+			printf("-pictureresolution      Set resolution of image in picture mode (shortcut is -pr)\n");
+			printf("-scale                  Set scale (zoom) of image (shortcut is -s)\n");
+			printf("-aspectratio            Set aspect ratio of image (shortcut is -a)\n");
+			printf("--help                  Display this help menu\n");
+			printf("-console                Set program to plot on the console (shortcut is -cmd) (console mode is the default)\n");
+			printf("-picture                Set program to plot in an image (shortcut is -pic)\n\n");
 
 			printf("All the commands are optional. If an argument is ommitted, then the programmed default will be used. Also, the commands may be used in any order.");
 			return 0;
@@ -117,15 +130,18 @@ int main(int argc, char* argv[]){
 
 	switch (mode){
 		case Console:
-			plotConsole(center, iterations, res_x, res_y, scale, aspectRatio);
+			plotConsole(center, iterations, con_res_x, con_res_y, scale, aspectRatio);
 			break;
 		case Picture:
-			blackWhitePlotPicture(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio, pictureFilename);
+			colorPlotPicture(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio, pictureFilename, palette);
 			break;
 	}
 
 	time_t timeAfter = time(0);
 	printf("Elapsed time %d seconds.", timeAfter - timeBefore);
+
+	free(palette.iterationsArray);
+	free(palette.colorArray);
 
 	return 0;
 }
