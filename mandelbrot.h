@@ -83,5 +83,4 @@ void colorPlotPicture(MandelbrotData data, char* pictureFilename, Palette palett
 	imageToFile(colorMap, data.res_x, data.res_y, pictureFilename, comment);
 	for (int i = 0; i < data.res_x; i++) free(colorMap[i]);
 	free(colorMap);
-	free(comment);
 }
