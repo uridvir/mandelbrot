@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
 
 	typedef enum { Console, Picture } PlottingMode;
 
-	struct Complex center = {-0.5, 0};
+	Complex center = {-0.5, 0};
 	int iterations = 1000;
 	int con_res_x = 210;
 	int con_res_y = 65;
@@ -50,18 +50,18 @@ int main(int argc, char* argv[]){
 	char* pictureFilename = "data.ppm";
 	double pic_res_x = 1620;
 	double pic_res_y = 1080;
-	struct Palette palette;
+	Palette palette;
 	palette.numberOfColors = 4;
 	palette.iterationsArray = malloc(palette.numberOfColors * sizeof(double));
-	palette.colorArray = malloc(palette.numberOfColors * sizeof(struct Color));
+	palette.colorArray = malloc(palette.numberOfColors * sizeof(Color));
 	palette.iterationsArray[0] = 0;
 	palette.iterationsArray[1] = 100;
 	palette.iterationsArray[2] = 800;
 	palette.iterationsArray[3] = 1000;
-	palette.colorArray[0] = (struct Color){0, 0, 128};
-	palette.colorArray[1] = (struct Color){255, 255, 255};
-	palette.colorArray[2] = (struct Color){255, 255, 255};
-	palette.colorArray[3] = (struct Color){0, 0, 0};
+	palette.colorArray[0] = (Color){0, 0, 128};
+	palette.colorArray[1] = (Color){255, 255, 255};
+	palette.colorArray[2] = (Color){255, 255, 255};
+	palette.colorArray[3] = (Color){0, 0, 0};
 
 	int i = 1;
 	while (i < argc){
@@ -127,27 +127,27 @@ int main(int argc, char* argv[]){
 	}
 	
 	time_t timeBefore = time(0);
-	int** iterationsPlot;
-	struct MandelbrotData data = {NULL, center, iterations, 0, 0, scale, aspectRatio};
+	IterationData** iterationData;
+	MandelbrotData data = {NULL, center, iterations, 0, 0, scale, aspectRatio};
 
 	switch (mode){
 		case Console:
-			iterationsPlot = plotIterationsToEscape(center, iterations, con_res_x, con_res_y, scale, aspectRatio);
-			data.iterationsPlot = iterationsPlot;
+			iterationData = plotIterationsToEscape(center, iterations, con_res_x, con_res_y, scale, aspectRatio);
+			data.iterationData = iterationData;
 			data.res_x = con_res_x;
 			data.res_y = con_res_y;
 			plotConsole(data);
-			for (int i = 0; i < con_res_x; i++) free(iterationsPlot[i]);
-			free(iterationsPlot);
+			for (int i = 0; i < con_res_x; i++) free(iterationData[i]);
+			free(iterationData);
 			break;
 		case Picture:
-			iterationsPlot = plotIterationsToEscape(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio);
-			data.iterationsPlot = iterationsPlot;
+			iterationData = plotIterationsToEscape(center, iterations, pic_res_x, pic_res_y, scale, aspectRatio);
+			data.iterationData = iterationData;
 			data.res_x = pic_res_x;
 			data.res_y = pic_res_y;
 			colorPlotPicture(data, pictureFilename, palette);
-			for (int i = 0; i < pic_res_x; i++) free(iterationsPlot[i]);
-			free(iterationsPlot);
+			for (int i = 0; i < pic_res_x; i++) free(iterationData[i]);
+			free(iterationData);
 			break;
 	}
 
