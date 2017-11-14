@@ -32,8 +32,8 @@ bool isNumber(char* str){
 			default: 
 				return false;
 		}
-		return true;
 	}
+	return true;
 }
 
 int main(int argc, char* argv[]){
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]){
 	}
 
 	time_t timeAfter = time(0);
-	printf("Elapsed time %d seconds.", timeAfter - timeBefore);
+	printf("Elapsed time %d seconds.", (int)(timeAfter - timeBefore));
 
 	free(palette.iterationsArray);
 	free(palette.colorArray);
